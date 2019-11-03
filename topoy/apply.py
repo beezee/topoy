@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from topoy.functor import Functor
 from topoy.hkt import HKT
 from topoy.typevars import *

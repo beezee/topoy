@@ -1,7 +1,6 @@
 from typing import TypeVar
 
 F = TypeVar('F')
+G = TypeVar('G')
 A = TypeVar('A')
-FA = TypeVar('FA')
 B = TypeVar('B')
-FB = TypeVar('FB')
