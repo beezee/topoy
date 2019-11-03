@@ -7,6 +7,5 @@ from typing import Generic
 
 class Applicative(Generic[F], Apply[F]):
 
-  @abstractmethod
+  #@abstractmethod
   def pure(self, a: A) -> HKT[F, A]: pass
-

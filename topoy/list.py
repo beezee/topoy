@@ -2,7 +2,6 @@ from dataclasses import dataclass
 from functools import reduce
 from topoy.applicative import Applicative
 from topoy.apply import Apply
-from topoy.arrow import Id
 from topoy.monad import Monad
 from topoy.hkt import HKT
 from topoy.functor import Functor
@@ -67,7 +66,8 @@ class ListTraverse(Traverse[ListF], ListFunctor):
           def x(b: B) -> List[B]:
             return lb + [b]
           return x
-        return ap.ap(f(e), ap.map(acc, m)) #type: ignore
+        return ap.ap(f(e), ap.map(acc, m)) #stype: ignore
+      z: HKT[G, List[B]] = ap.pure([])
       return ap.map(
-        reduce(reducer, ListF.proj(fa), #type: ignore
-          ap.pure([])), ListF.inj) # type: ignore
+        reduce(reducer, ListF.proj(fa), #stype: ignore
+          z), ListF.inj) # stype: ignore

@@ -7,7 +7,7 @@ from typing import Callable, Generic
 
 class Traverse(Generic[F], Functor[F]):
 
-  @abstractmethod
+  #@abstractmethod
   def traverse(self, 
     ap: Applicative[G], fa: HKT[F, A], 
     f: Callable[[A], HKT[G, B]]) -> HKT[G, HKT[F, B]]: pass
