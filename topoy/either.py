@@ -1,17 +1,13 @@
-from dataclasses import dataclass
-from functools import reduce
 from topoy.applicative import Applicative
 from topoy.apply import Apply
-from topoy.arrow import Id
 from topoy.monad import Monad
 from topoy.hkt import HKT
 from topoy.functor import Functor
-from topoy.plus_empty import PlusEmpty
 from topoy.traverse import Traverse
 from topoy.typevars import *
 from topoy.semigroup import KeepLeft, Semigroup
 from topoy.sum import append2sg, bind2, F1, F2, fold2, map2, Sum2
-from typing import Callable, cast, Generic, List, Type
+from typing import Callable, cast, Generic
 
 class EitherF(Generic[B]):
   @staticmethod

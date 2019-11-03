@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from functools import reduce
 from topoy.applicative import Applicative
 from topoy.apply import Apply
