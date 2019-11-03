@@ -3,8 +3,8 @@ from topoy.hkt import HKT
 from topoy.typevars import *
 from typing import Callable, Generic
 
-class Functor(ABC, Generic[F]):
+class Monad(ABC, Generic[F]):
 
   @abstractmethod
-  def map(self, fa: HKT[F, A], 
-          f: Callable[[A], B]) -> HKT[F, B]: pass
+  def bind(self, fa: HKT[F, A],
+           f: Callable[[A], HKT[F, B]]) -> HKT[F, B]: pass

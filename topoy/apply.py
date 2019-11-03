@@ -1,23 +1,19 @@
 from abc import ABC, abstractmethod
+from topoy.functor import Functor
 from topoy.hkt import HKT
-from typing import Callable, Generic, TypeVar
+from topoy.typevars import *
+from typing import Callable, Generic, Tuple
 
-F = TypeVar('F')
-A = TypeVar('A')
-FA = TypeVar('FA')
-B = TypeVar('B')
-FB = TypeVar('FB')
-FAB = TypeVar('FAB')
-
-class Apply(ABC, Generic[F, A, FA, B, FB, FAB]):
-
-  def __init__(self, fa: HKT[F, A, FA],
-            fab: HKT[F, Callable[[A], B], FAB]) -> None:
-    (self._fa, self._fab) = (fa, fab)
+class Apply(Generic[F], Functor[F]):
 
   @abstractmethod
-  def ap(self, fa: HKT[F, A, FA],
-       fab: HKT[F, Callable[[A], B], FAB]) -> HKT[F, B, FB]: pass
+  def ap(self, fa: HKT[F, A],
+       fab: HKT[F, Callable[[A], B]]) -> HKT[F, B]: pass
 
-  def __call__(self) -> HKT[F, B, FB]:
-    return self.ap(self._fa, self._fab)
+  def tuple(self, fa: HKT[F, A], 
+            fb: HKT[F, B]) -> HKT[F, Tuple[A, B]]:
+    def tup(b: B) -> Callable[[A], Tuple[A, B]]:
+      def x(a: A) -> Tuple[A, B]:
+        return (a, b)
+      return x
+    return self.ap(fa, self.map(fb, tup))

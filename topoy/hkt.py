@@ -1,11 +1,7 @@
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
-from typing import Callable, Generic, TypeVar, List
+from topoy.typevars import *
+from typing import Callable, Generic, List
 
-F = TypeVar('F')
-A = TypeVar('A')
-FA = TypeVar('FA')
-
-@dataclass
-class HKT(Generic[F, A, FA]):
-  run: FA
+class HKT(Generic[F, A]):
+  def __init__(self) -> None:
+    assert False
