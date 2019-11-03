@@ -23,7 +23,10 @@ class ListFunctor(Functor[ListF]):
   def map(self, fa: HKT[ListF, A], f: Callable[[A], B]) -> HKT[ListF, B]:
     return ListF.inj(list(map(f, ListF.proj(fa))))
 
-class ListMonad(Monad[ListF]):
+class ListMonad(ListFunctor, Monad[ListF]):
+
+  def point(self, a: A) -> HKT[ListF, A]:
+    return ListF.inj([a])
 
   def bind(self, fa: HKT[ListF, A],
            f: Callable[[A], HKT[ListF, B]]) -> HKT[ListF, B]:

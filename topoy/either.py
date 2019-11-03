@@ -24,7 +24,10 @@ class EitherFunctor(Generic[C], Functor[EitherF[C]]):
           f: Callable[[A], B]) -> HKT[EitherF[C], B]:
     return EitherF[C].inj(map2(EitherF[B].proj(fa), f))
 
-class EitherMonad(Generic[C], Monad[EitherF[C]]):
+class EitherMonad(Generic[C], EitherFunctor[C], Monad[EitherF[C]]):
+
+  def point(self, a: A) -> HKT[EitherF[C], A]:
+    return EitherF[C].inj(F2(a))
 
   def bind(self, fa: HKT[EitherF[C], A],
            f: Callable[[A], HKT[EitherF[C], B]]) -> HKT[EitherF[C], B]:
