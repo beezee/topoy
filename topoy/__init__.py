@@ -3,6 +3,7 @@ from topoy.apply import tuple
 from topoy.list import ListApplicative, ListFunctor
 from topoy.list import ListTraverse, ListF, ListMonad
 from topoy.maybe import Maybe, MaybeF, MaybeFunctor
+from topoy.trampoline import TrampolineMonad, TrampF, go 
 from topoy.sum import F1, F2
 
 if __name__ == '__main__':
@@ -21,3 +22,5 @@ if __name__ == '__main__':
   b: Maybe[int] = F1(None)
   print(MaybeFunctor().map(MaybeF.inj(a), lambda x: x + 1))
   print(MaybeFunctor().map(MaybeF.inj(b), lambda x: x + 1))
+  print(go(TrampolineMonad().bind(TrampF.inj(F2(2)), 
+    lambda x: TrampF.inj(F2(x + 3)))))
