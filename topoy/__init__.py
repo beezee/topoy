@@ -1,9 +1,6 @@
-from topoy.hkt import HKT
-from topoy.apply import tuple
 from topoy.either import LeftOf, RightOf
 from topoy.list import ListApplicative, List
 from topoy.maybe import Maybe, MaybeApplicative
-from topoy.sum import F1, F2
 
 if __name__ == '__main__':
   def x(i: int) -> str:
