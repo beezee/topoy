@@ -1,5 +1,5 @@
 from topoy.applicative import Applicative
-from topoy.apply import Apply
+from topoy.apply import Apply, tuple
 from topoy.monad import Monad
 from topoy.hkt import HKT
 from topoy.functor import Functor
@@ -7,7 +7,7 @@ from topoy.traverse import Traverse
 from topoy.typevars import *
 from topoy.semigroup import KeepLeft, Semigroup
 from topoy.sum import append2sg, bind2, F1, F2, fold2, map2, Sum2
-from typing import Callable, cast, Generic
+from typing import Callable, cast, Generic, Tuple
 
 class EitherF(Generic[B]): pass
 
@@ -45,6 +45,10 @@ class Either(Generic[B, A], HKT[EitherF[B], A]):
   def ap(self, fab: 'Either[B, Callable[[A], C]]', 
          sg: Semigroup[B] = KeepLeft[B]()) -> 'Either[B, C]':
     return Either(append2sg(self.run, fab.run, sg)).map(lambda x: x[1](x[0]))
+
+  def tuple(self, fb: 'Either[B, C]') -> 'Either[B, Tuple[A, C]]':
+    return Either.proj(
+      tuple(EitherApplicative(), self, fb))
 
   def traverse(self, 
     ap: Applicative[G], 
