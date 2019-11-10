@@ -1,26 +1,34 @@
 from topoy.either import *
-from topoy.semigroup import KeepLeft
+from topoy.semigroup import KeepLeft, Semigroup
 
-Maybe = Sum2[None, A]
-
-class MaybeF(EitherF[None]):
+class Maybe(Generic[A]):
   @staticmethod
-  def inj(s: Sum2[None, A]) -> 'HKT[EitherF[None], A]':
+  def inj(s: Either[None, A]) -> 'HKT[EitherF[None], A]':
     return cast(HKT[EitherF[None], A], s)
 
   @staticmethod
-  def proj(hkt: 'HKT[EitherF[None], A]') -> Sum2[None, A]:
-    return cast(Sum2[None, A], hkt)
+  def proj(hkt: 'HKT[EitherF[None], A]') -> Either[None, A]:
+    return cast(Either[None, A], hkt)
 
-class MaybeFunctor(EitherFunctor[None]): pass
+  @classmethod
+  def just(cls, a: A) -> Either[None, A]:
+    return RightOf[None].put(a)
 
-class MaybeMonad(EitherMonad[None]): pass
+  @classmethod
+  def none(cls) -> Either[None, A]:
+    return LeftOf[A].put(None)
 
-class MaybeApply(EitherApply[None]):
+def MaybeFunctor() -> EitherFunctor[None]:
+  return EitherFunctor[None]()
 
-  def __init__(self) -> None:
-    self._sg = KeepLeft[None]()
+def MaybeMonad() -> EitherMonad[None]:
+  return EitherMonad[None]()
 
-class MaybeApplicative(MaybeApply, EitherApply[None]): pass
+def MaybeApply(sg: Semigroup[None] = KeepLeft[None]()) -> EitherApply[None]:
+  return EitherApply[None](sg)
 
-class MaybeTraverse(EitherTraverse[None]): pass
+def MaybeApplicative(sg: Semigroup[None] = KeepLeft[None]()) -> EitherApplicative[None]:
+  return EitherApplicative[None](sg)
+
+def MaybeTraverse() -> EitherTraverse[None]:
+  return EitherTraverse[None]()

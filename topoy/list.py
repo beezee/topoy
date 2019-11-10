@@ -9,7 +9,9 @@ from topoy.traverse import Traverse
 from topoy.typevars import *
 from typing import Callable, cast, Generic, List as PyList, Tuple, Type
 
-class ListF():
+class ListF(): pass
+class List(Generic[A], HKT[ListF, A]):
+
   @staticmethod
   def inj(l: 'List[A]') -> 'HKT[ListF, A]':
     return cast(HKT[ListF, A], l)
@@ -17,8 +19,6 @@ class ListF():
   @staticmethod
   def proj(hkt: 'HKT[ListF, A]') -> 'List[A]':
     return cast('List[A]', hkt)
-
-class List(Generic[A], HKT[ListF, A]):
 
   def __init__(self, run: PyList[A]) -> None:
     self.run = run
@@ -37,7 +37,7 @@ class List(Generic[A], HKT[ListF, A]):
     return self.bind(kleisli)
 
   def tuple(self, fb: 'List[B]') -> 'List[Tuple[A, B]]':
-    return ListF.proj(
+    return List.proj(
       tuple(ListApplicative(), self, fb))
 
   def traverse(self,
@@ -56,7 +56,7 @@ class List(Generic[A], HKT[ListF, A]):
 class ListFunctor(Functor[ListF]):
 
   def map(self, fa: HKT[ListF, A], f: Callable[[A], B]) -> HKT[ListF, B]:
-    return ListF.proj(fa).map(f)
+    return List.proj(fa).map(f)
 
 class ListMonad(ListFunctor, Monad[ListF]):
 
@@ -65,13 +65,13 @@ class ListMonad(ListFunctor, Monad[ListF]):
 
   def bind(self, fa: HKT[ListF, A],
            f: Callable[[A], HKT[ListF, B]]) -> HKT[ListF, B]:
-    return ListF.proj(fa).bind(lambda x: ListF.proj((f(x))))
+    return List.proj(fa).bind(lambda x: List.proj((f(x))))
 
 class ListApply(Apply[ListF], ListFunctor):
 
   def ap(self, fa: HKT[ListF, A],
        fab: HKT[ListF, Callable[[A], B]]) -> HKT[ListF, B]:
-    return ListF.proj(fa).ap(ListF.proj(fab))
+    return List.proj(fa).ap(List.proj(fab))
 
 class ListApplicative(Applicative[ListF], ListApply):
 
@@ -84,11 +84,11 @@ class ListPlusEmpty(PlusEmpty[ListF]):
     return List[A]([])
 
   def plus(self, la1: HKT[ListF, A], la2: HKT[ListF, A]) -> HKT[ListF, A]:
-    return List(ListF.proj(la1).run + ListF.proj(la2).run)
+    return List(List.proj(la1).run + List.proj(la2).run)
 
 class ListTraverse(Traverse[ListF], ListFunctor):
 
   def traverse(self, 
     ap: Applicative[G], fa: HKT[ListF, A], 
     f: Callable[[A], HKT[G, B]]) -> HKT[G, HKT[ListF, B]]:
-      return ap.map(ListF.proj(fa).traverse(ap, f), ListF.inj)
+      return ap.map(List.proj(fa).traverse(ap, f), List.inj)
