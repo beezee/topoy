@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from topoy.hkt import HKT
 from topoy.typevars import *
-from typing import Callable, Generic
+from typing import Callable, Generic, TypeVar
 
 class Functor(ABC, Generic[F]):
 
@@ -11,4 +11,4 @@ class Functor(ABC, Generic[F]):
   # https://github.com/python/mypy/issues/7863
   #@abstractmethod
   def map(self, fa: HKT[F, A], 
-          f: Callable[[A], B]) -> HKT[F, B]: pass
+          f: Callable[[A], B]) -> HKT[F, B]: ...

@@ -1,6 +1,5 @@
-from abc import ABC, abstractmethod
 from topoy.typevars import *
-from typing import Callable, Generic, List
+from typing import Generic
 
 class HKT(Generic[F, A]):
   def __init__(self) -> None:

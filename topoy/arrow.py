@@ -1,5 +1,8 @@
+from topoy.hkt import HKT
+from topoy.functor import Functor
+from topoy.monad import Monad
 from topoy.typevars import *
-from typing import Callable, Generic
+from typing import Callable, cast, Generic
 
 class Fn(Generic[A, B]):
 
@@ -22,3 +25,23 @@ class Compose(Generic[A, B, C]):
   def __call__(self, t1: A) -> C:
     return self.c2(self.c1(t1))
   
+class Fn0():
+  @staticmethod
+  def inj(fn: Callable[[], A]) -> 'HKT[Fn0, A]':
+    return cast(HKT[Fn0, A], fn)
+
+  @staticmethod
+  def proj(hkt: 'HKT[Fn0, A]') -> Callable[[], A]:
+    return cast(Callable[[], A], hkt)
+
+class Fn0Functor(Functor[Fn0]):
+
+  def map(self, fa: HKT[Fn0, A],
+          f: Callable[[A], B]) -> HKT[Fn0, B]:
+    return Fn0.inj(lambda: f(Fn0.proj(fa)()))
+
+class Fn0Monad(Monad[Fn0]):
+  
+  def bind(self, fa: HKT[Fn0, A],
+           f: Callable[[A], HKT[Fn0, B]]) -> HKT[Fn0, B]:
+    return f(Fn0.proj(fa)())
