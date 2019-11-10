@@ -3,9 +3,9 @@ from topoy.hkt import HKT
 from topoy.applicative import Applicative
 from topoy.functor import Functor
 from topoy.typevars import *
-from typing import Callable, Generic
+from typing import Callable
 
-class Traverse(Generic[F], Functor[F]):
+class Traverse(Functor[F]):
 
   #@abstractmethod
   def traverse(self, 

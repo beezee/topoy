@@ -4,7 +4,7 @@ from topoy.hkt import HKT
 from topoy.typevars import *
 from typing import Callable, Generic, Tuple
 
-class Apply(Generic[F], Functor[F]):
+class Apply(Functor[F]):
 
   #@abstractmethod
   def ap(self, fa: HKT[F, A],

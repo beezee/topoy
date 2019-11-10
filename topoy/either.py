@@ -11,7 +11,7 @@ from typing import Callable, cast, Generic, Tuple
 
 class EitherF(Generic[B]): pass
 
-class Either(Generic[B, A], HKT[EitherF[B], A]):
+class Either(HKT[EitherF[B], A]):
 
   @staticmethod
   def inj(e: 'Either[B, A]') -> 'HKT[EitherF[B], A]':

@@ -4,7 +4,7 @@ from topoy.functor import Functor
 from topoy.typevars import *
 from typing import Callable, Generic
 
-class Monad(Generic[F], Functor[F]):
+class Monad(Functor[F]):
 
   #@abstractmethod
   def point(self, a: A) -> HKT[F, A]: pass
