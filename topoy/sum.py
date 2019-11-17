@@ -150,7 +150,7 @@ class fold6(Generic[T1, T2, T3, T4, T5, T6, Out]):
               Callable[[T3], Out], Callable[[T4], Out],
               Callable[[T5], Out], Callable[[T6], Out]]
 
-  def __call_(self, d: Sum6[T1, T2, T3, T4, T5, T6]) -> Out:
+  def __call__(self, d: Sum6[T1, T2, T3, T4, T5, T6]) -> Out:
     if isinstance(d, F1): 
       return self.fold[0](d.run)
     elif isinstance(d, F2): 

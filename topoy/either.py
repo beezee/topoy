@@ -37,6 +37,9 @@ class Either(HKT[EitherF[B], A]):
   def bimap(self, fl: Callable[[B], C], fr: Callable[[A], D]) -> 'Either[C, D]':
     return self.map(fr).left_map(fl)
 
+  def fold(self, fl: Callable[[B], C], fr: Callable[[A], C]) -> C:
+    return fold2((fl, fr))(self.run)
+
   def bind(self, afb: Callable[[A], 'Either[B, C]']) -> 'Either[B, C]':
     return fold2[B, A, 'Either[B, C]']((
       lambda l: Either(F1(l)),

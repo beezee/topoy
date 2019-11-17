@@ -11,5 +11,5 @@ class Functor(ABC, Generic[F]):
       This will allow mypy to catch attempts to 
       use ill-defined instances before runtime """
   @abstractmethod
-  def map(cls, fa: HKT[F, A], 
+  def map(self, fa: HKT[F, A], 
           f: Callable[[A], B]) -> HKT[F, B]: ...

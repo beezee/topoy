@@ -9,6 +9,7 @@ C = TypeVar('C')
 D = TypeVar('D')
 E = TypeVar('E')
 H = TypeVar('H')
+J = TypeVar('J')
 
 S = TypeVar('S')
 X = TypeVar('X')
