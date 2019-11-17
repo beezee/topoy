@@ -39,3 +39,20 @@ class Divide(Contravariant[F]):
       (a, b, c, d, e) = f(h)
       return (a, b, c, (d, e))
     return self.divide4(fa, fb, fc, self.tuple2(fd, fe), ff)
+
+  def divide6(self, fa: HKT[F, A], fb: HKT[F, B], fc: HKT[F, C],
+              fd: HKT[F, D], fe: HKT[F, E], fh: HKT[F, H],
+              f: Callable[[I], Tuple[A, B, C, D, E, H]]) -> HKT[F, I]:
+    def ff(i: I) -> Tuple[A, B, C, D, Tuple[E, H]]:
+      (a, b, c, d, e, h) = f(i)
+      return (a, b, c, d, (e, h))
+    return self.divide5(fa, fb, fc, fd, self.tuple2(fe, fh), ff)
+
+  def divide7(self, fa: HKT[F, A], fb: HKT[F, B], fc: HKT[F, C],
+              fd: HKT[F, D], fe: HKT[F, E], fh: HKT[F, H],
+              fi: HKT[F, I],
+              f: Callable[[J], Tuple[A, B, C, D, E, H, I]]) -> HKT[F, J]:
+    def ff(j: J) -> Tuple[A, B, C, D, E, Tuple[H, I]]:
+      (a, b, c, d, e, h, i) = f(j)
+      return (a, b, c, d, e, (h, i))
+    return self.divide6(fa, fb, fc, fd, fe, self.tuple2(fh, fi), ff)
