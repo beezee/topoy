@@ -6,5 +6,5 @@ from topoy.typevars import *
 
 class Applicative(Apply[F]):
 
-  #@abstractmethod
+  @abstractmethod
   def pure(self, a: A) -> HKT[F, A]: pass

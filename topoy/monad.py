@@ -6,9 +6,9 @@ from typing import Callable, Generic
 
 class Monad(Functor[F]):
 
-  #@abstractmethod
+  @abstractmethod
   def point(self, a: A) -> HKT[F, A]: pass
 
-  #@abstractmethod
+  @abstractmethod
   def bind(self, fa: HKT[F, A],
            f: Callable[[A], HKT[F, B]]) -> HKT[F, B]: pass

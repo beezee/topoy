@@ -6,7 +6,7 @@ from typing import Callable, Generic, Tuple
 
 class Apply(Functor[F]):
 
-  #@abstractmethod
+  @abstractmethod
   def ap(self, fa: HKT[F, A],
        fab: HKT[F, Callable[[A], B]]) -> HKT[F, B]: pass
 

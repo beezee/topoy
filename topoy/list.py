@@ -92,3 +92,4 @@ class ListTraverse(Traverse[ListF], ListFunctor):
     ap: Applicative[G], fa: HKT[ListF, A], 
     f: Callable[[A], HKT[G, B]]) -> HKT[G, HKT[ListF, B]]:
       return ap.map(List.proj(fa).traverse(ap, f), List.inj)
+
