@@ -39,3 +39,25 @@ class Decide(Contravariant[F]):
       Compose(fold5[A, B, C, D, E, Sum2[A, Sum4[B, C, D, E]]](
         (F1, lambda b: F2(F1(b)), lambda c: F2(F2(c)),
          lambda d: F2(F3(d)), lambda e: F2(F4(e)))), f))
+
+  def choose6(self, a: HKT[F, A], b: HKT[F, B],
+              c: HKT[F, C], d: HKT[F, D], e: HKT[F, E],
+              h: HKT[F, H],
+              f: Callable[[I], Sum6[A, B, C, D, E, H]]) -> HKT[F, I]:
+    bcdeh = self.choose5(b, c, d, e, h, Id[Sum5[B, C, D, E, H]]())
+    return self.choose(a, bcdeh,
+      Compose(fold6[A, B, C, D, E, H, Sum2[A, Sum5[B, C, D, E, H]]](
+        (F1, lambda b: F2(F1(b)), lambda c: F2(F2(c)),
+         lambda d: F2(F3(d)), lambda e: F2(F4(e)),
+         lambda h: F2(F5(h)))), f))
+
+  def choose7(self, a: HKT[F, A], b: HKT[F, B],
+              c: HKT[F, C], d: HKT[F, D], e: HKT[F, E],
+              h: HKT[F, H], i: HKT[F, I],
+              f: Callable[[J], Sum7[A, B, C, D, E, H, I]]) -> HKT[F, J]:
+    bcdehi = self.choose6(b, c, d, e, h, i, Id[Sum6[B, C, D, E, H, I]]())
+    return self.choose(a, bcdehi,
+      Compose(fold7[A, B, C, D, E, H, I, Sum2[A, Sum6[B, C, D, E, H, I]]](
+        (F1, lambda b: F2(F1(b)), lambda c: F2(F2(c)),
+         lambda d: F2(F3(d)), lambda e: F2(F4(e)),
+         lambda h: F2(F5(h)), lambda i: F2(F6(i)))), f))
