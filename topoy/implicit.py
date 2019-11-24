@@ -5,11 +5,10 @@ Implicits = {} # type: ignore
 class Implicit(Generic[A]):
 
   def __init__(self, a: A) -> None:
-    #tpe: Type[A] =  type(a) if tpe_a == None else tpe_a # type: ignore
     self._a = a
 
   def register(self, tpe: Type[A]) -> None:
-    Implicits[tpe_a] = self._a # type: ignore
+    Implicits[tpe] = self._a
 
   @classmethod
   def resolve(cls, t: Type[A]) -> A:
