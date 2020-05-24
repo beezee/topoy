@@ -1,4 +1,4 @@
-from topoy.either import LeftOf, RightOf
+from topoy.either_data import LeftOf, RightOf
 from topoy.list_data import ListApplicative
 from topoy.list import List
 from topoy.maybe import Maybe, MaybeApplicative
@@ -23,8 +23,8 @@ if __name__ == '__main__':
     .map(lambda x: x.run).run)
   print(List([1, 2, 3]).bind(
     lambda x: List([str(x), str(x) + str(x)])).run)
-  print(RightOf[str].put(2).bimap(lambda x: x + '!', lambda y: y + 2))
-  print(LeftOf[int].put('foo').bimap(lambda x: x + '!', lambda y: y + 2))
+  #print(RightOf[str].put(2).bimap(lambda x: x + '!', lambda y: y + 2))
+  #print(LeftOf[int].put('foo').bimap(lambda x: x + '!', lambda y: y + 2))
   print(RightOf[str].put(2).tuple(LeftOf[str].put('error')))
   print(RightOf[str].put(2).tuple(RightOf[str].put('foo')))
   print(LeftOf[int].put('error').tuple(RightOf[str].put('foo')))

@@ -13,5 +13,7 @@ J = TypeVar('J')
 
 S = TypeVar('S')
 X = TypeVar('X')
+Y = TypeVar('Y')
+Z = TypeVar('Z')
 I = TypeVar('I')
 O = TypeVar('O')

@@ -1,4 +1,5 @@
-from topoy.either import *
+from topoy.either import Either
+from topoy.either_data import *
 from topoy.semigroup import KeepLeft, Semigroup
 
 class Maybe(Generic[A]):

@@ -21,7 +21,7 @@ import {packagename} as instances
 class {classname}(ABC, instances.{superclass}[A]):
   @staticmethod
   def inj(l: '{classname}[A]') -> 'HKT[instances.{tag}, A]':
-    return cast(HKT[instances.{tag}, A], l)
+    return cast('HKT[instances.{tag}, A]', l)
 
   @staticmethod
   def proj(hkt: 'HKT[instances.{tag}, A]') -> '{classname}[A]':

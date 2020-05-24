@@ -1,116 +1,79 @@
-from topoy.applicative import Applicative
-from topoy.apply import Apply
-from topoy.monad import Monad
+from abc import ABC, abstractmethod
 from topoy.hkt import HKT
-from topoy.functor import Functor
-from topoy.traverse import Traverse
 from topoy.typevars import *
-from topoy.semigroup import KeepLeft, Semigroup
-from topoy.sum import append2sg, bind2, F1, F2, fold2, map2, Sum2
-from typing import Callable, cast, Generic, Tuple
+from typing import cast, Callable, Generic, TypeVar
+from typing import Tuple
+from topoy.applicative import Applicative
 
-class EitherF(Generic[B]): pass
+import topoy.either_data as instances
 
-class Either(HKT[EitherF[B], A]):
+class Either(ABC, instances.EitherData[X, A]):
+  @staticmethod
+  def inj(l: 'Either[X, A]') -> 'HKT[instances.EitherF[X], A]':
+    return cast('HKT[instances.EitherF[X], A]', l)
 
   @staticmethod
-  def inj(e: 'Either[B, A]') -> 'HKT[EitherF[B], A]':
-    return cast(HKT[EitherF[B], A], e)
+  def proj(hkt: 'HKT[instances.EitherF[X], A]') -> 'Either[X, A]':
+    return cast('Either[X, A]', hkt)
 
-  @staticmethod
-  def proj(hkt: 'HKT[EitherF[B], A]') -> 'Either[B, A]':
-    return cast('Either[B, A]', hkt)
-
-  def __init__(self, run: Sum2[B, A]) -> None:
-    self.run = run
-
-  def left_map(self, f: Callable[[B], C]) -> 'Either[C, A]':
-    return fold2[B, A, 'Either[C, A]']((
-      lambda l: Either(F1(f(l))),
-      lambda r: Either(F2(r))))(self.run)
-
-  def map(self, f: Callable[[A], C]) -> 'Either[B, C]':
-    return fold2[B, A, 'Either[B, C]']((
-      lambda l: Either(F1(l)),
-      lambda r: Either(F2(f(r)))))(self.run)
-
-  def bimap(self, fl: Callable[[B], C], fr: Callable[[A], D]) -> 'Either[C, D]':
-    return self.map(fr).left_map(fl)
-
-  def fold(self, fl: Callable[[B], C], fr: Callable[[A], C]) -> C:
-    return fold2((fl, fr))(self.run)
-
-  def bind(self, afb: Callable[[A], 'Either[B, C]']) -> 'Either[B, C]':
-    return fold2[B, A, 'Either[B, C]']((
-      lambda l: Either(F1(l)),
-      lambda r: afb(r)))(self.run)
-
-  def ap(self, fab: 'Either[B, Callable[[A], C]]', 
-         sg: Semigroup[B] = KeepLeft[B]()) -> 'Either[B, C]':
-    return Either(append2sg(self.run, fab.run, sg)).map(lambda x: x[1](x[0]))
-
-  def tuple(self, fb: 'Either[B, C]') -> 'Either[B, Tuple[A, C]]':
+  def map(self, f: Callable[[A], B]) -> 'Either[X, B]':
+    return Either.proj(instances.EitherFunctor[X]().map(self, f))
+  
+  def bind(
+    self, f: Callable[[A], 'Either[X, B]']
+  ) -> 'Either[X, B]':
+    return Either.proj(instances.EitherMonad[X]().bind(self, f))
+  
+  def ap(
+    self, fab: 'Either[X, Callable[[A], B]]'
+  ) -> 'Either[X, B]':
     return Either.proj(
-      EitherApplicative[B]().tuple(self, fb))
+      instances.EitherApply[X]().ap(self, fab))
 
-  def traverse(self, 
-    ap: Applicative[G], 
-    f: Callable[[A], HKT[G, C]]) -> HKT[G, 'Either[B, C]']:
-      return fold2[B, A, HKT[G, 'Either[B, C]']]((
-        lambda l: ap.pure(LeftOf[C].put(l)),
-        lambda r: ap.map(f(r), lambda x: RightOf[B].put(x))))(self.run)
+  def apply(self, fb: 'Either[X, B]',
+            f: Callable[[A, B], C]) -> 'Either[X, C]':
+    return self.tuple(fb).map(lambda x: f(x[0], x[1]))
 
-  def __str__(self) -> str:
-    return fold2[B, A, str]((
-      lambda l: 'Left(' + str(l) + ')',
-      lambda r: 'Right(' + str(r) + ')'))(self.run)
+  def apply3(self, fb: 'Either[X, B]', fc: 'Either[X, C]',
+             f: Callable[[A, B, C], D]) -> 'Either[X, D]':   
+    return self.apply(fb.tuple(fc), 
+      lambda a, bc: f(a, bc[0], bc[1]))
 
-class LeftOf(Generic[A]):
+  def apply4(self, fb: 'Either[X, B]', fc: 'Either[X, C]',
+             fd: 'Either[X, D]',
+             f: Callable[[A, B, C, D], E]) -> 'Either[X, E]':
+    return self.apply3(fb, fc.tuple(fd),
+      lambda a, b, cd: f(a, b, cd[0], cd[1]))
 
-  @classmethod
-  def put(cls, b: B) -> Either[B, A]:
-    return Either[B, A](F1(b))
+  def apply5(self, fb: 'Either[X, B]', fc: 'Either[X, C]',
+             fd: 'Either[X, D]', fe: 'Either[X, E]',
+             f: Callable[[A, B, C, D, E], H]) -> 'Either[X, H]':
+    return self.apply4(fb, fc, fd.tuple(fe),
+      lambda a, b, c, de: f(a, b, c, de[0], de[1]))
 
-class RightOf(Generic[A]):
+  def apply6(self, fb: 'Either[X, B]', fc: 'Either[X, C]',
+             fd: 'Either[X, D]', fe: 'Either[X, E]', fh: 'Either[X, H]',
+             f: Callable[[A, B, C, D, E, H], I]) -> 'Either[X, I]':
+    return self.apply5(fb, fc, fd, fe.tuple(fh),
+      lambda a, b, c, d, eh: f(a, b, c, d, eh[0], eh[1]))
 
-  @classmethod
-  def put(cls, b: B) -> Either[A, B]:
-    return Either[A, B](F2(b))
+  def apply7(self, fb: 'Either[X, B]', fc: 'Either[X, C]',
+             fd: 'Either[X, D]', fe: 'Either[X, E]', fh: 'Either[X, H]',
+             fi: 'Either[X, I]',
+             f: Callable[[A, B, C, D, E, H, I], J]) -> 'Either[X, J]':
+    return self.apply6(fb, fc, fd, fe, fh.tuple(fi),
+      lambda a, b, c, d, e, hi: f(a, b, c, d, e, hi[0], hi[1]))
 
-class EitherFunctor(Generic[C], Functor[EitherF[C]]):
+  def tuple(
+    self, fb: 'Either[X, B]'
+  ) -> 'Either[X, Tuple[A, B]]':
+    return Either.proj(
+      instances.EitherApply[X]().tuple(self, fb))
+  
+  def traverse(self, ap: Applicative[G],
+    f: Callable[[A], HKT[G, B]]) -> HKT[G, 'Either[X, B]']:
+      return ap.map(
+        instances.EitherTraverse[X]().traverse(ap, self, f),
+        Either.proj)
+  
 
-  def map(self, fa: HKT[EitherF[C], A], 
-          f: Callable[[A], B]) -> HKT[EitherF[C], B]:
-    return Either.proj(fa).map(f)
-
-class EitherMonad(Generic[C], EitherFunctor[C], Monad[EitherF[C]]):
-
-  def point(self, a: A) -> HKT[EitherF[C], A]:
-    return RightOf[C].put(a)
-
-  def bind(self, fa: HKT[EitherF[C], A],
-           f: Callable[[A], HKT[EitherF[C], B]]) -> HKT[EitherF[C], B]:
-    return Either.proj(fa).bind(lambda x: Either.proj(f(x)))
-
-class EitherApply(Generic[C], Apply[EitherF[C]], EitherFunctor[C]):
-
-  def __init__(self, sg: Semigroup[C] = KeepLeft[C]()) -> None:
-    self._sg = sg
-
-  def ap(self, fa: HKT[EitherF[C], A],
-       fab: HKT[EitherF[C], Callable[[A], B]]) -> HKT[EitherF[C], B]:
-    return Either.proj(fa).ap(Either.proj(fab), self._sg)
-
-class EitherApplicative(Generic[C], 
-                        Applicative[EitherF[C]], 
-                        EitherApply[C]):
-
-  def pure(self, a: A) -> HKT[EitherF[C], A]:
-    return RightOf[C].put(a)
-
-class EitherTraverse(Generic[C], Traverse[EitherF[C]], EitherFunctor[C]):
-
-  def traverse(self, 
-    ap: Applicative[G], fa: HKT[EitherF[C], A], 
-    f: Callable[[A], HKT[G, B]]) -> HKT[G, HKT[EitherF[C], B]]:
-      return ap.map(Either.proj(fa).traverse(ap, f), Either.inj)
