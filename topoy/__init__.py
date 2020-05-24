@@ -2,6 +2,7 @@ from topoy.either import LeftOf, RightOf
 from topoy.list_data import ListApplicative
 from topoy.list import List
 from topoy.maybe import Maybe, MaybeApplicative
+from typing import Callable
 
 if __name__ == '__main__':
   def x(i: int) -> str:
@@ -10,6 +11,12 @@ if __name__ == '__main__':
     return x(i) + x(i)
   print(List([1, 2, 3]).map(x2).run)
   print(List([1, 2, 3]).tuple(List([3, 4, 5])).run)
+  print(List([1, 2, 3]).apply3(
+    List([3, 4, 5]), 
+    List[Callable[[int, int], str]](
+      [lambda x, y: f"({x}, {y})", lambda x, y: str(x - y), 
+       lambda x, y: str(x + y)]),
+    lambda x, y, f: f(x, y)).run)
   print(List([1, 2, 3]).ap(List([x, x2])).run)
   print(List.proj(List([1, 2, 3])
     .traverse(ListApplicative(), lambda x: List([str(x), str(x) + str(x)])))
