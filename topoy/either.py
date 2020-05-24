@@ -1,5 +1,5 @@
 from topoy.applicative import Applicative
-from topoy.apply import Apply, tuple
+from topoy.apply import Apply
 from topoy.monad import Monad
 from topoy.hkt import HKT
 from topoy.functor import Functor
@@ -51,7 +51,7 @@ class Either(HKT[EitherF[B], A]):
 
   def tuple(self, fb: 'Either[B, C]') -> 'Either[B, Tuple[A, C]]':
     return Either.proj(
-      tuple(EitherApplicative(), self, fb))
+      EitherApplicative[B]().tuple(self, fb))
 
   def traverse(self, 
     ap: Applicative[G], 
