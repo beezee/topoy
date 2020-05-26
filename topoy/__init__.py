@@ -1,4 +1,5 @@
-from topoy.either_data import LeftOf, RightOf
+from topoy.either import LeftOf, RightOf
+from topoy.either_ops import EitherOps
 from topoy.list_data import ListApplicative
 from topoy.list import List
 from topoy.maybe import Maybe, MaybeApplicative
@@ -23,11 +24,13 @@ if __name__ == '__main__':
     .map(lambda x: x.run).run)
   print(List([1, 2, 3]).bind(
     lambda x: List([str(x), str(x) + str(x)])).run)
-  #print(RightOf[str].put(2).bimap(lambda x: x + '!', lambda y: y + 2))
-  #print(LeftOf[int].put('foo').bimap(lambda x: x + '!', lambda y: y + 2))
-  print(RightOf[str].put(2).tuple(LeftOf[str].put('error')))
-  print(RightOf[str].put(2).tuple(RightOf[str].put('foo')))
-  print(LeftOf[int].put('error').tuple(RightOf[str].put('foo')))
+  print(RightOf[str].put(2).map_data(
+    lambda x: x.bimap(lambda x: x + '!', lambda y: y + 2)))
+  print(LeftOf[int].put('foo').map_data(
+    lambda x: x.bimap(lambda x: x + '!', lambda y: y + 2)))
+  print(RightOf[str].put(2).tuple(LeftOf[str].put('error').run))
+  print(RightOf[str].put(2).tuple(RightOf[str].put('foo').run))
+  print(LeftOf[int].put('error').tuple(RightOf[str].put('foo').run))
   print(List.proj(RightOf[str].put(2)
     .traverse(ListApplicative(), lambda x: List([x, x + 5])))
     .map(str).run)
@@ -36,11 +39,11 @@ if __name__ == '__main__':
     .map(str).run)
   print(Maybe.just(2))
   print(Maybe[int].none())
-  print(Maybe.just(2).tuple(Maybe[str].none()))
-  print(Maybe.just(2).tuple(Maybe.just('foo')))
-  print(Maybe[int].none().tuple(Maybe.just('foo')))
-  print(Maybe.proj(RightOf[str].put(2)
-    .traverse(MaybeApplicative(), lambda x: Maybe.just(x + 3)))
+  print(Maybe.just(2).tuple(Maybe[str].none().run))
+  print(Maybe.just(2).tuple(Maybe.just('foo').run))
+  print(Maybe[int].none().tuple(Maybe.just('foo').run))
+  print(EitherOps(Maybe.proj(RightOf[str].put(2)
+    .traverse(MaybeApplicative(), lambda x: Maybe.just(x + 3).run)))
     .map(lambda x: x.map(lambda y: y + 2)))
   print(List.proj(Maybe.just(2)
     .traverse(ListApplicative(), lambda x: List([x, x + 5])))

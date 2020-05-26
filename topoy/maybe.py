@@ -1,5 +1,5 @@
-from topoy.either import Either
-from topoy.either_data import *
+from topoy.either import *
+from topoy.either_ops import EitherOps
 from topoy.semigroup import KeepLeft, Semigroup
 
 class Maybe(Generic[A]):
@@ -12,11 +12,11 @@ class Maybe(Generic[A]):
     return cast(Either[None, A], hkt)
 
   @classmethod
-  def just(cls, a: A) -> Either[None, A]:
+  def just(cls, a: A) -> EitherOps[None, A]:
     return RightOf[None].put(a)
 
   @classmethod
-  def none(cls) -> Either[None, A]:
+  def none(cls) -> EitherOps[None, A]:
     return LeftOf[A].put(None)
 
 def MaybeFunctor() -> EitherFunctor[None]:

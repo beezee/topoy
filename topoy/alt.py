@@ -1,7 +1,6 @@
 from abc import abstractmethod
 from topoy.arrow import Compose, Id
-from topoy.either import Either
-from topoy.either_data import LeftOf, RightOf
+from topoy.either import Either, LeftOf, RightOf
 from topoy.functor import Functor
 from topoy.hkt import HKT
 from topoy.sum import *
